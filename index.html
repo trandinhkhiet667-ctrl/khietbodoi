@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tran dinh khiet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. CORE STYLES */
+        :root {
+            --primary: #38bdf8;
+            --secondary: #818cf8;
+            --bg: #0f172a;
+            --glass: rgba(30, 41, 59, 0.7);
+            --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--bg); 
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* 2. BACKGROUND ANIMATIONS */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+        }
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.1));
+            filter: blur(80px);
+            border-radius: 50%;
+            animation: move 20s infinite alternate;
+        }
+        @keyframes move {
+            from { transform: translate(-10%, -10%) rotate(0deg); }
+            to { transform: translate(20%, 20%) rotate(360deg); }
+        }
+
+        /* 3. SLIDE WRAPPER */
+        .slide-container {
+            width: 100vw;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 10%;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: var(--transition);
+        }
+        .slide-container.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 4. TRANSFORM & HOVER EFFECTS */
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: var(--transition);
+        }
+        .glass-panel:hover {
+            transform: translateY(-5px) scale(1.005);
+            border-color: var(--primary);
+        }
+
+        .tile {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 24px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
+        .tile:hover {
+            transform: translateY(-5px);
+            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* 5. TYPOGRAPHY */
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; margin: 0; }
+        .gradient-text {
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #38bdf8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .slide-title { font-size: 42px; font-weight: 700; margin-bottom: 30px; position: relative; }
+        .slide-title::after {
+            content: ''; position: absolute; bottom: -10px; left: 0;
+            width: 60px; height: 6px; background: var(--primary); border-radius: 3px;
+        }
+
+        /* DATA VISUALIZATION */
+        .bar-fill { width: 0; transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .active .bar-fill { width: var(--final-width); }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+
+        /* PYRAMID STYLING */
+        .pyramid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .pyramid-layer {
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: 0.3s;
+        }
+        .pyramid-layer:hover { background: var(--primary); color: var(--bg); transform: scale(1.05); }
+
+        .image-container {
+            width: 100%;
+            height: 350px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .image-container:hover img {
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow">
+        <div class="blob" style="top: -10%; left: -10%;"></div>
+        <div class="blob" style="bottom: -10%; right: -10%; animation-delay: -5s;"></div>
+    </div>
+
+    <!-- SLIDE 1: Intro -->
+    <div class="slide-container active" id="slide-intro">
+        <div style="text-align: center; max-width: 900px; margin: 0 auto;">
+            <div class="glass-panel" style="padding: 60px;">
+                <p style="text-transform: uppercase; letter-spacing: 5px; color: var(--primary); font-weight: 600;">HUST • SOICT</p>
+                <h1 class="gradient-text" style="font-size: 72px; margin: 20px 0;">KIẾN TRÚC<br>MÁY TÍNH</h1>
+                <p style="font-size: 20px; color: #94a3b8;">Khám phá bộ não đằng sau kỷ nguyên số</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: Importance -->
+    <div class="slide-container" id="slide-importance">
+        <h2 class="slide-title">Tầm quan trọng</h2>
+        <div class="grid-3">
+            <div class="tile">
+                <i class="fa-solid fa-code" style="color:var(--primary); font-size: 32px; margin-bottom: 15px;"></i>
+                <h3>Tối ưu Phần mềm</h3>
+                <p style="font-size: 14px;">Viết chương trình thực thi nhanh hơn nhờ hiểu cách CPU xử lý lệnh.</p>
+            </div>
+            <div class="tile">
+                <i class="fa-solid fa-microchip" style="color:var(--primary); font-size: 32px; margin-bottom: 15px;"></i>
+                <h3>Thiết kế Chip</h3>
+                <p style="font-size: 14px;">Nền tảng để tham gia thiết kế vi mạch, FPGA và bộ xử lý AI.</p>
+            </div>
+            <div class="tile">
+                <i class="fa-solid fa-shield-halved" style="color:var(--primary); font-size: 32px; margin-bottom: 15px;"></i>
+                <h3>An ninh hệ thống</h3>
+                <p style="font-size: 14px;">Hiểu các lỗ hổng cấp phần cứng như Spectre hay Meltdown.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: Von Neumann Model -->
+    <div class="slide-container" id="slide-von-neumann">
+        <h2 class="slide-title">Mô hình Von Neumann</h2>
+        <div class="two-col">
+            <div class="image-container">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1280" alt="Hardware Circuitry">
+            </div>
+            <div>
+                <p>Nền tảng của hầu hết máy tính hiện nay được John von Neumann đề xuất năm 1945.</p>
+                <div class="tile" style="margin-top: 20px;">
+                    <ul style="padding-left: 20px; font-size: 15px;">
+                        <li style="margin-bottom: 10px;"><strong>CPU:</strong> Bộ xử lý trung tâm gồm ALU và Control Unit.</li>
+                        <li style="margin-bottom: 10px;"><strong>Memory:</strong> Bộ nhớ duy nhất chứa cả lệnh và dữ liệu.</li>
+                        <li style="margin-bottom: 10px;"><strong>Bus:</strong> Hệ thống kết nối các thành phần.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: Memory Hierarchy -->
+    <div class="slide-container" id="slide-memory">
+        <h2 class="slide-title">Phân cấp Bộ nhớ</h2>
+        <div class="two-col">
+            <div>
+                <p>Tại sao cần nhiều loại bộ nhớ?</p>
+                <div class="tile" style="margin-top: 20px;">
+                    <p style="font-size: 14px;"><strong>Quy luật:</strong> Càng lên cao, tốc độ càng nhanh nhưng dung lượng càng ít và giá thành càng đắt.</p>
+                    <p style="font-size: 14px; margin-top: 10px; color: var(--primary);">=> Tận dụng tính cục bộ (Locality) của dữ liệu.</p>
+                </div>
+            </div>
+            <div class="pyramid-container">
+                <div class="pyramid-layer" style="width: 120px; background: #38bdf8;">Registers</div>
+                <div class="pyramid-layer" style="width: 180px; background: #0ea5e9;">Cache (L1/L2/L3)</div>
+                <div class="pyramid-layer" style="width: 260px; background: #0284c7;">Main Memory (RAM)</div>
+                <div class="pyramid-layer" style="width: 360px; background: #0369a1;">SSD / Hard Drive</div>
+                <div class="pyramid-layer" style="width: 450px; background: #1e40af;">Archive Storage</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: Performance & Amdahl's Law -->
+    <div class="slide-container" id="slide-amdahl">
+        <h2 class="slide-title">Định luật Amdahl</h2>
+        <div class="two-col">
+            <div class="glass-panel" style="text-align: center;">
+                <math display="block" style="font-size: 28px;">
+                    <mi>Speedup</mi>
+                    <mo>=</mo>
+                    <mfrac>
+                        <mn>1</mn>
+                        <mrow>
+                            <mo stretchy="false">(</mo>
+                            <mn>1</mn>
+                            <mo>−</mo>
+                            <mi>f</mi>
+                            <mo stretchy="false">)</mo>
+                            <mo>+</mo>
+                            <mfrac><mi>f</mi><mi>s</mi></mfrac>
+                        </mrow>
+                    </mfrac>
+                </math>
+            </div>
+            <div class="tile">
+                <h3>Ý nghĩa thực tiễn</h3>
+                <p style="font-size: 14px;">Nếu bạn tối ưu một phần chiếm 50% thời gian thực hiện lên nhanh vô hạn, tốc độ tổng thể tối đa cũng chỉ tăng được <strong>2 lần</strong>.</p>
+                <p style="font-size: 14px; margin-top: 10px; color: var(--secondary);"><em>"Cải thiện cái gì hay dùng nhất" (Make the common case fast).</em></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: Instruction Cycle -->
+    <div class="slide-container" id="slide-cycle">
+        <h2 class="slide-title">Chu kỳ thực thi Lệnh</h2>
+        <div class="grid-2">
+            <div class="tile">
+                <h3 style="color:var(--primary);">1. Fetch (Lấy lệnh)</h3>
+                <p style="font-size: 14px;">CPU lấy mã lệnh từ bộ nhớ chính dựa trên địa chỉ trong Program Counter (PC).</p>
+            </div>
+            <div class="tile">
+                <h3 style="color:var(--primary);">2. Decode (Giải mã)</h3>
+                <p style="font-size: 14px;">Control Unit phân tích mã máy để biết CPU cần làm gì (Cộng, Nhân, Nhảy...).</p>
+            </div>
+            <div class="tile">
+                <h3 style="color:var(--secondary);">3. Execute (Thực thi)</h3>
+                <p style="font-size: 14px;">ALU thực hiện tính toán vật lý hoặc điều khiển luồng dữ liệu.</p>
+            </div>
+            <div class="tile">
+                <h3 style="color:var(--secondary);">4. Store/Write-back</h3>
+                <p style="font-size: 14px;">Kết quả được ghi lại vào Registers hoặc Memory để sử dụng tiếp.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: ISA (RISC vs CISC) -->
+    <div class="slide-container" id="slide-isa">
+        <h2 class="slide-title">Kiến trúc Tập lệnh (ISA)</h2>
+        <div class="grid-2">
+            <div class="glass-panel">
+                <h3 style="color: var(--primary); text-align: center; margin-bottom: 20px;">RISC</h3>
+                <p style="font-size: 12px; color: #94a3b8;">Reduced Instruction Set Computer</p>
+                <ul style="font-size: 14px; margin-top: 15px;">
+                    <li>Lệnh ngắn, chiều dài cố định.</li>
+                    <li>Thực hiện 1 lệnh trong 1 chu kỳ.</li>
+                    <li>Ít lệnh nhưng chạy rất nhanh.</li>
+                    <li>Ví dụ: <strong>ARM (Apple M1/M2, Smartphone).</strong></li>
+                </ul>
+            </div>
+            <div class="glass-panel">
+                <h3 style="color: var(--secondary); text-align: center; margin-bottom: 20px;">CISC</h3>
+                <p style="font-size: 12px; color: #94a3b8;">Complex Instruction Set Computer</p>
+                <ul style="font-size: 14px; margin-top: 15px;">
+                    <li>Lệnh phức tạp, chiều dài thay đổi.</li>
+                    <li>Một lệnh có thể làm nhiều việc.</li>
+                    <li>Tiết kiệm bộ nhớ cho code.</li>
+                    <li>Ví dụ: <strong>Intel x86 (PC, Laptop).</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: Summary -->
+    <div class="slide-container" id="slide-summary">
+        <div class="glass-panel" style="text-align: center;">
+            <h2 class="gradient-text" style="font-size: 50px;">TỔNG KẾT</h2>
+            <div class="grid-3" style="margin-top: 40px; text-align: left;">
+                <div>
+                    <h4 style="color: var(--primary);">Phần cứng</h4>
+                    <p style="font-size: 13px;">CPU, RAM, BUS - Những thực thể vật lý quyết định tốc độ thô.</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary);">Kiến trúc</h4>
+                    <p style="font-size: 13px;">Cách tổ chức và giao tiếp giữa các thành phần (Von Neumann, ISA).</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary);">Hiệu năng</h4>
+                    <p style="font-size: 13px;">Sự cân bằng giữa thời gian thực thi, chi phí và năng lượng tiêu thụ.</p>
+                </div>
+            </div>
+            <div class="image-container" style="margin-top: 40px; height: 250px;">
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1280" alt="Cybersecurity Circuit">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.slide-container').forEach(slide => observer.observe(slide));
+    </script>
+</body>
+</html>
